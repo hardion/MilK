@@ -267,7 +267,7 @@ void MilKTestClass::testStandBy() {
   // Delay max : 2 seconds
   milK->off();
   milK->standby();
-  CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
+  CPPUNIT_ASSERT_EQUAL(OFF, milK->get_state());
 
   // TEST StandBy State from OFF
   // SPEC : the command standby ends with STANDBY State
@@ -292,6 +292,7 @@ void MilKTestClass::testStandBy() {
   //this->waitWhileState(RUNNING);
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
   CPPUNIT_ASSERT(NOT_EXPECTED_CURRENT != milK->get_current());
+  CPPUNIT_ASSERT(NOT_EXPECTED_CURRENT == milK->get_current_set());
 
   // SPEC : The field is not regulated
   milK->on();
@@ -329,6 +330,7 @@ void MilKTestClass::testLocaleRemote() {
   // TEST StandBy State from STANDBY
   // SPEC : the command standby ends with LOCALE State
   // Delay max : 2 seconds
+  milK->on();
   milK->standby();
   milK->locale();
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
@@ -342,7 +344,7 @@ void MilKTestClass::testLocaleRemote() {
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
   milK->set_current(NOT_EXPECTED_CURRENT);
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
-  CPPUNIT_ASSERT(NOT_EXPECTED_CURRENT != milK->get_current());
+  CPPUNIT_ASSERT(NOT_EXPECTED_CURRENT != milK->get_current_set());
 
   // SPEC : Not allowed to set the field
   milK->on();
@@ -350,7 +352,7 @@ void MilKTestClass::testLocaleRemote() {
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
   milK->set_field(NOT_EXPECTED_FIELD);
   CPPUNIT_ASSERT_EQUAL(expected, milK->get_state());
-  CPPUNIT_ASSERT(NOT_EXPECTED_FIELD != milK->get_field());
+  CPPUNIT_ASSERT(NOT_EXPECTED_FIELD != milK->get_field_set());
 
 }
 

@@ -13,8 +13,8 @@
 #include "MilKMock.h"
 
 // Modify if this value doesn't start a long action
-#define IP "127.0.0.1" 
-#define PORT 65535 
+#define IP "192.168.1.234" 
+#define PORT 1234 
 
 // Modify if this value doesn't start a long action
 #define EXPECTED_CURRENT 100 
