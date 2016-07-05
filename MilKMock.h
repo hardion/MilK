@@ -29,13 +29,59 @@ namespace milk {
     MilKMock(const MilKMock& orig);
 
     virtual ~MilKMock();
-
+	int openconnection(char command[256]) //open & close connection each time a command is sent
+	{
+		int sockfd, portno, n;
+		struct sockaddr_in serv_addr;
+		struct hostent *server;
+		//const char *argv[]= {"192.168.1.234"};
+		const char *argv[]= {"127.0.0.1"};
+		char buffer[256];
+		portno = 1234;
+		sockfd = socket(AF_INET, SOCK_STREAM, 0);
+		if (sockfd < 0) 
+			perror("ERROR opening socket");
+		server = gethostbyname(argv[0]);
+		if (server == NULL) {
+			fprintf(stderr,"ERROR, no such host\n");
+		    exit(0);
+		}
+		bzero((char *) &serv_addr, sizeof(serv_addr));
+		serv_addr.sin_family = AF_INET;
+		bcopy((char *)server->h_addr, 
+			 (char *)&serv_addr.sin_addr.s_addr,
+			 server->h_length);
+		serv_addr.sin_port = htons(portno);
+		if (connect(sockfd,(struct sockaddr *) &serv_addr,sizeof(serv_addr)) < 0) 
+			perror("ERROR connecting");
+		sprintf(buffer,"%s",command);
+		n = write(sockfd,buffer,strlen(buffer));
+		if (n < 0) 
+			 perror("ERROR writing to socket");
+		bzero(buffer,256);
+		n = read(sockfd,buffer,255);
+		if (n < 0) 
+			 perror("ERROR reading from socket");
+		printf("%s\n",buffer);
+		sprintf(command,"%s",buffer);
+		close(sockfd);
+		return 0;
+		
+		}
     /** Attributes **/
     int get_current() {
+		char command[256];
+		sprintf(command,"%s","READ_CURRENT");
+      openconnection(command);
+      current= atof(command);
       return current;
     }
 
     int get_current_set() {
+		char command[256];
+		sprintf(command,"%s","READ_CURRSET");
+      openconnection(command);
+      current_set= atof(command);
       return current_set;
     }
 
@@ -51,10 +97,18 @@ namespace milk {
     }
 
     int get_field() {
+		char command[256];
+		sprintf(command,"%s","READMAGFIELD");
+      openconnection(command);
+      field= atof(command);
       return field;
     }
 
     int get_field_set() {
+		char command[256];
+		sprintf(command,"%s","READ_FLD_SET");
+      openconnection(command);
+      field_set= atof(command);
       return field_set;
     }
 
@@ -143,7 +197,7 @@ namespace milk {
     }
 
     void standby() {
-      if (state == ON || state == OFF) {
+      if (state == ON) {
         state = STANDBY;
       }
     }
